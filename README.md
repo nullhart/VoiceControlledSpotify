@@ -1,6 +1,8 @@
 # SpotifyVR
 Voice Controller for Spotify
 
+![](http://i.giphy.com/lMQFPLSAFdogo.gif)
+
 # Install
 * exacute the install.bat or
 * npm install
