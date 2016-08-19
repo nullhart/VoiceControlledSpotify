@@ -3,6 +3,10 @@ Voice Controller for Spotify
 
 ![](http://i.giphy.com/lMQFPLSAFdogo.gif)
 
+# Required Software
+* Node.js V4.50  
+* Download: https://nodejs.org/en/
+
 # Install
 * exacute the install.bat or
 * npm install
