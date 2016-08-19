@@ -1,0 +1,141 @@
+<main>
+    <script src="annyang.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="animate.css">
+    <script>
+        var socket = io.connect('/');
+        socket.on('stats', function (data) {
+            console.log('Connected clients:', data.numClients);
+            var msg = new SpeechSynthesisUtterance('Welcome to spotify VR');
+            window.speechSynthesis.speak(msg);
+        });
+        (function () {
+            function searchTracks(query) {
+                $.ajax({
+                    url: 'https://api.spotify.com/v1/search',
+                    data: {
+                        q: query,
+                        type: 'track'
+                    },
+                    success: function (response) {
+                        if (response.tracks.items.length) {
+                            var track = response.tracks.items[0];
+                            socket.emit('songURI', track.uri);
+                            communicateAction('<div class="alert alert-success" ><h2 class="animated  zoomIn">Playing: ' + track.name + ' by ' + track.artists[0].name + '</h2></div><img id="image" class="alert alert-success animated  zoomIn" width="450" src="' + track.album.images[1].url + '">');
+                            setTimeout(function () {
+                                $('html, body').animate({
+                                    scrollTop: $("#bottom").offset().top
+                                }, 2000);
+                            }, 500);
+                        }
+                    }
+                });
+            }
+
+            function playSong(songName, artistName) {
+                var query = songName;
+                if (artistName) {
+                    query += ' artist:' + artistName;
+                }
+                searchTracks(query);
+            }
+            //Scroll Animation
+            function scrollWin() {
+                window.scrollTo(0, 1000);
+            }
+
+            function communicateAction(text) {
+                var rec = document.getElementById('conversation');
+                rec.innerHTML += text + '</div>';
+            }
+
+            function errorAction(text) {
+                var rec = document.getElementById('conversation');
+                //rec.innerHTML += '<div class="alert alert-success" ><h2 class="animated  zoomIn">' + text + '</h2></div></div>';
+            }
+
+            function recognized(text) {
+                var rec = document.getElementById('conversation');
+                //rec.innerHTML += '<div class="recognized"><div>' + text + '</div></div>';
+            }
+            if (annyang) {
+                // Let's define our first command. First the text we expect, and then the function it should call
+                var commands = {
+                    'paws': function () {
+                        socket.emit('pause');
+                        var msg = new SpeechSynthesisUtterance('Pausing');
+                        window.speechSynthesis.speak(msg);
+                    },
+                    'Oz': function () {
+                        socket.emit('pause');
+                        var msg = new SpeechSynthesisUtterance('Pausing');
+                        window.speechSynthesis.speak(msg);
+                    },
+                    'cars': function () {
+                        socket.emit('pause');
+                        var msg = new SpeechSynthesisUtterance('Pausing');
+                        window.speechSynthesis.speak(msg);
+                    },
+                    'good morning': function () {
+                        var msg = new SpeechSynthesisUtterance('Morning to you Master');
+                        window.speechSynthesis.speak(msg);
+                    },
+                    'play': function () {
+                        var msg = new SpeechSynthesisUtterance('playing');
+                        window.speechSynthesis.speak(msg);
+                        socket.emit('play');
+                    },
+                    'play track *song': function (song) {
+                        recognized('Play track ' + song);
+                        playSong(song);
+                    },
+                    'play *song by *artist': function (song, artist) {
+                        recognized('Play song ' + song + ' by ' + artist);
+                        playSong(song, artist);
+                    },
+                    'play song *song': function (song) {
+                        recognized('Play song ' + song);
+                        playSong(song);
+                    },
+                    'play *song': function (song) {
+                        recognized('Play ' + song);
+                        playSong(song);
+                    },
+                    ':nomatch': function (message) {
+                        //recognized(message);
+                        communicateAction('<div class="alert alert-warning" >Sorry, I don\'t understand this action');
+                    }
+                };
+                // Add our commands to annyang
+                annyang.addCommands(commands);
+                // Start listening. You can call this here, or attach this call to an event, button, etc.
+                annyang.start();
+            }
+            annyang.addCallback('error', function () {
+                errorAction('error');
+            });
+        })();
+    </script>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <style>
+        body {
+            background: url("http://9hdwallpaper.com/wp-content/uploads/2016/05/Monument-Valley-Wallpaper.jpg");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            padding-top: 40px;
+        }
+    </style>
+
+    <body>
+        <div class="wrap">
+            <div id="commands">
+                <h1><font color="white">Play songs through voice commands</font></h1> </div>
+            <div id="conversation"></div>
+            <div id="bottom"></div>
+        </div>
+    </body>
+</main>
