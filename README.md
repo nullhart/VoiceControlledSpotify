@@ -12,7 +12,8 @@ Voice Controller for Spotify
 * npm install
 
 # Usage
- Start server with start.bat
+* Start server with start.bat
+* Navigate to localhost:3000 using Google Chrome
  
 # Commands
 * Play
