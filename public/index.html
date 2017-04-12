@@ -80,6 +80,11 @@
                         var msg = new SpeechSynthesisUtterance('Pausing');
                         window.speechSynthesis.speak(msg);
                     },
+                    'next': function () {
+                        socket.emit('next');
+                        var msg = new SpeechSynthesisUtterance('Next Song');
+                        window.speechSynthesis.speak(msg);
+                    },
                     'good morning': function () {
                         var msg = new SpeechSynthesisUtterance('Morning to you Master');
                         window.speechSynthesis.speak(msg);

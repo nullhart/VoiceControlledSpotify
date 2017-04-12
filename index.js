@@ -90,6 +90,10 @@ io.on('connection', function (socket) {
     socket.on('play', function () {
         helper.player.play();
     });
+
+    socket.on('next', function () {
+        helper.player.seek();
+    });
 });
 
 console.log("Server Started Successfully! :)")
