@@ -1,15 +1,15 @@
 
 //External dependences
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
-var port = '3000';
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const port = '3000';
 server.listen(port);
-var fs = require('fs'),
+const fs = require('fs'),
     request = require('request');
-var path = require('path');
-var bodyParser = require('body-parser');
+const path = require('path');
+const bodyParser = require('body-parser');
 const SpotifyWebHelper = require('spotify-web-helper');
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -25,8 +25,10 @@ helper.player.on('error', err => {
 
   if (error.message.match(/No user logged in/)) {
     // also fires when Spotify client quits
+    console.log("Spotify Closed/Not Open");
   } else {
     // other errors: /Cannot start Spotify/ and /Spotify is not installed/
+    console.log("Cannot find Spotify");
   }
 });
 
