@@ -6,7 +6,7 @@ Voice Controller for Spotify
 Demo = https://www.youtube.com/watch?v=CQxAA4sLEjI
 
 # Required Software
-* Node.js V4.50  
+* Node.js  
 * Download: https://nodejs.org/en/
 
 # Install
@@ -14,7 +14,7 @@ Demo = https://www.youtube.com/watch?v=CQxAA4sLEjI
 * npm install
 
 # Usage
-* Start server with start.bat
+* Start server with npm start
 * Navigate to localhost:3000 using Google Chrome
  
 # Commands
