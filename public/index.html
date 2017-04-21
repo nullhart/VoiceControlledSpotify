@@ -5,208 +5,28 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="controller.js"></script>
     <link rel="stylesheet" href="animate.css">
-
-
-    <style>
-        body {
-            background: url("background.jpg");
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            padding-top: 40px;
-        }
-        
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
-            width: 80%;
-            border-radius: 5px;
-        }
-        
-        .card:hover {
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-        }
-        
-        img {
-            border-radius: 10px 10px 0 0;
-        }
-        
-        .cardContainer {
-            padding: 2px 16px;
-            width: 100%;
-            text-align: center;
-            display: flex;
-            border-radius: 0 0 10px 10px;
-            background-color: #eceff1;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-        }
-        
-        .rightSide {
-            padding: 2px 16px;
-            width: 100%;
-            text-align: center;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-        }
-        
-        .leftSide {
-            padding: 2px 16px;
-            width: 100%;
-            text-align: center;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-        }
-    </style>
-    <script>
-        var socket = io.connect('/');
-        socket.on('stats', function (data) {
-            console.log('Connected clients:', data.numClients);
-            //var msg = new SpeechSynthesisUtterance('Welcome to spotify VR');
-            //window.speechSynthesis.speak(msg);
-        });
-        (function () {
-            function searchTracks(query) {
-                $.ajax({
-                    url: 'https://api.spotify.com/v1/search',
-                    data: {
-                        q: query,
-                        type: 'track'
-                    },
-                    success: function (response) {
-                        if (response.tracks.items.length) {
-                            var track = response.tracks.items[0];
-                            socket.emit('songURI', track.uri);
-                            divVar = '<div class="card">' + '<img ' + 'src="' + track.album.images[1].url + '"' + ' alt="Avatar" style="width:100%" ><div class="cardContainer"><h4><b>Playing: ' + track.name + ' by ' + track.artists[0].name + '</b></h4> </div></div>'
-                            console.log(divVar)
-                            communicateAction(divVar);
-                            setTimeout(function () {
-                                $('html, body').animate({
-                                    scrollTop: $("#bottom").offset().top
-                                }, 2000);
-                            }, 500);
-                        }
-                    }
-                });
-            }
-
-            function playSong(songName, artistName) {
-                var query = songName;
-                if (artistName) {
-                    query += ' artist:' + artistName;
-                }
-                searchTracks(query);
-            }
-
-            //Scroll Animation
-            function scrollWin() {
-                window.scrollTo(0, 1000);
-            }
-
-
-            //Annyang GUI Events
-            function communicateAction(text) {
-                var rec = document.getElementById('conversation');
-                rec.innerHTML += text + '</div>';
-            }
-
-            function errorAction(text) {
-                var rec = document.getElementById('conversation');
-                //rec.innerHTML += '<div class="alert alert-success" ><h2 class="animated  zoomIn">' + text + '</h2></div></div>';
-            }
-
-            function recognized(text) {
-                var rec = document.getElementById('conversation');
-                //rec.innerHTML += '<div class="recognized"><div>' + text + '</div></div>';
-            }
-
-            //Annyang service
-            if (annyang) {
-                // Let's define our first command. First the text we expect, and then the function it should call
-                var commands = {
-                    'paws': function () {
-                        socket.emit('pause');
-                        var msg = new SpeechSynthesisUtterance('Pausing');
-                        window.speechSynthesis.speak(msg);
-                    },
-                    'Spotify pause track': function () {
-                        socket.emit('pause');
-                        var msg = new SpeechSynthesisUtterance('Pausing');
-                        window.speechSynthesis.speak(msg);
-                    },
-                    'Oz': function () {
-                        socket.emit('pause');
-                        var msg = new SpeechSynthesisUtterance('Pausing');
-                        window.speechSynthesis.speak(msg);
-                    },
-                    'cars': function () {
-                        socket.emit('pause');
-                        var msg = new SpeechSynthesisUtterance('Pausing');
-                        window.speechSynthesis.speak(msg);
-                    },
-                    'good morning': function () {
-                        var msg = new SpeechSynthesisUtterance('Morning to you Master');
-                        window.speechSynthesis.speak(msg);
-                        annyang.stop();
-                        annyang.start();
-                    },
-                    'Spotify resume track': function () {
-                        var msg = new SpeechSynthesisUtterance('playing');
-                        window.speechSynthesis.speak(msg);
-                        socket.emit('play');
-                    },
-                    'play track *song': function (song) {
-                        recognized('Play track ' + song);
-                        playSong(song);
-                    },
-                    'play *song by *artist': function (song, artist) {
-                        recognized('Play song ' + song + ' by ' + artist);
-                        playSong(song, artist);
-                    },
-                    'play song *song': function (song) {
-                        recognized('Play song ' + song);
-                        playSong(song);
-                    },
-                    'play *song': function (song) {
-                        recognized('Play ' + song);
-                        playSong(song);
-                    },
-                    ':nomatch': function (message) {
-                        //recognized(message);
-                        communicateAction('<div class="alert alert-warning" >Sorry, I don\'t understand this action');
-                    }
-                };
-
-                // Add our commands to annyang
-                annyang.addCommands(commands);
-
-                // Start listening. You can call this here, or attach this call to an event, button, etc.
-                annyang.start({ autoRestart: true });
-            }
-
-            annyang.addCallback('error', function () {
-                errorAction('error');
-            });
-        })();
-    </script>
+    <link rel="stylesheet" href="style.css">
 </main>
 
 
+
 <body>
+
     <div class="leftSide" style="float: left; width: 50%">
         <div id="commands">
-            <h1>
+            <h1 style="text-align: left;">
                 <font color="white">Play songs through voice commands</font>
             </h1>
         </div>
         <div id="conversation"></div>
-        <div id="bottom"></div>
+    </div>
+    <div class="leftSide" style="float: left; width: 1%">
+        <div style="background: #000 "></div>
     </div>
     <div class="rightSide" style="float: right; width: 50%">
-        <h1>hello</h1>
+        <iframe class="card" width="560" height="315" src="https://www.youtube.com/embed/ZsCGXcpa3Qw" frameborder="0" allowfullscreen></iframe>
     </div>
-
-
 
 </body>
