@@ -135,7 +135,7 @@ socket.on("stats", function(data) {
     annyang.addCommands(commands);
 
     // Start listening. You can call this here, or attach this call to an event, button, etc.
-    annyang.start({ autoRestart: true });
+    annyang.start({ autoRestart: true, continuous: true });
   }
 
   annyang.addCallback("error", function() {
