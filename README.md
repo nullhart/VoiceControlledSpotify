@@ -1,4 +1,4 @@
-# SpotifyVR
+# Voice Controlled Spotify
 Voice Controller for Spotify
 
 ![](http://i.giphy.com/lMQFPLSAFdogo.gif)
